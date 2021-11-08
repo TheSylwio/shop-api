@@ -19,7 +19,9 @@ class UserFixtures extends Fixture {
 		$user
 			->setEmail('johndoe@example.com')
 			->setPassword($this->encoder->hashPassword($user, 'admin123'))
-			->setRoles(['ROLE_SUPER_ADMIN']);
+			->setRoles(['ROLE_SUPER_ADMIN'])
+			->setUsername('johndoe')
+			->setPhone('123456789');
 
 		$manager->persist($user);
 		$manager->flush();

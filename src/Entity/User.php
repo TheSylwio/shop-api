@@ -2,7 +2,9 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Entity\DTO\User as UserDTO;
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -10,7 +12,11 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ApiResource(
 	collectionOperations: [
-		'post',
+		'post' => [
+			'path' => '/user/register',
+			'input' => User::class,
+			'output' => UserDTO::class
+		]
 	],
 	itemOperations: [
 		'get',
@@ -26,6 +32,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface {
 	 * @ORM\GeneratedValue
 	 * @ORM\Column(type="integer")
 	 */
+	#[ApiProperty(identifier: true)]
 	private $id;
 
 	/**
@@ -89,7 +96,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface {
 	 */
 	public function getRoles(): array {
 		$roles = $this->roles;
-		// guarantee every user at least has ROLE_USER
 		$roles[] = 'ROLE_USER';
 
 		return array_unique($roles);
