@@ -19,7 +19,6 @@ class UserTest extends WebTestCase {
 		$this->assertSame(200, $response->getStatusCode());
 		$this->assertJson($response->getContent());
 		$this->assertArrayHasKey('token', json_decode($response->getContent(), true));
-
 	}
 
 	public function testRegister(): void {
@@ -27,20 +26,17 @@ class UserTest extends WebTestCase {
 		$userRepository = static::getContainer()->get(UserRepository::class);
 		$user = $userRepository->findOneBy(['email' => 'johndoe@example.com']);
 
+		$now = time();
 		$content = json_encode([
-			'email' => 'test@example.com',
+			'email' => 'test_' . $now . '@example.com',
 			'password' => 'test123',
-			'username' => 'testuser'
+			'username' => 'testuser_' . $now
 		]);
 
 		$client->loginUser($user);
 		$client->request('POST', '/api/user/register', [], [], ['CONTENT_TYPE' => 'application/json'], $content);
 
 		$this->assertResponseIsSuccessful();
-		$this->assertNotNull($userRepository->findOneBy(['email' => 'test@example.com']));
-	}
-
-	protected function tearDown(): void {
-		parent::tearDown();
+		$this->assertNotNull($userRepository->findOneBy(['email' => 'test_' . $now . '@example.com']));
 	}
 }
